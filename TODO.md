@@ -35,20 +35,20 @@ A simple checklist for building a React Todo List app with multiple lists and ba
 
 ### 🧩 `NewListInput`
 
-- [ ] Input field for new list name
-- [ ] Submit button or Enter key
-- [ ] Add a new list to the main state
+- [x] Input field for new list name
+- [x] Submit button or Enter key
+- [x] Add a new list to the main state
 
 ---
 
 ## 3. Combine in `App`
 
-- [ ] Hold full app state: list of todo lists
-- [ ] Handle:
+- [x] Hold full app state: list of todo lists
+- [x] Handle:
   - Adding a new list
   - Adding a new item to a list
   - Marking todos as done
-- [ ] Pass data and handlers to `Todos` and `NewListInput`
+- [x] Pass data and handlers to `Todos` and `NewListInput`
 
 ---
 

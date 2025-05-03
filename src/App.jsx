@@ -120,6 +120,15 @@ class App extends Component {
     };
 
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.addList = this.addList.bind(this);
+  }
+
+  addList(listName) {
+    const newList = { listName, todos: [], nextId: 1 };
+
+    this.setState((old) => ({
+      listOfTodos: [...old.listOfTodos, newList],
+    }));
   }
 
   handleUpdate(listName, todos, nextId) {
@@ -133,9 +142,19 @@ class App extends Component {
   }
 
   render() {
-    return this.state.listOfTodos.map((list) => (
-      <Todos key={list.listName} todos={list} onChange={this.handleUpdate} />
-    ));
+    return (
+      <div>
+        <h1>Lists</h1>
+        <Input onkeydown={this.addList} />
+        {this.state.listOfTodos.map((list) => (
+          <Todos
+            key={list.listName}
+            todos={list}
+            onChange={this.handleUpdate}
+          />
+        ))}
+      </div>
+    );
   }
 }
 
