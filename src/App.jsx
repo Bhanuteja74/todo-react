@@ -34,12 +34,20 @@ class Input extends Component {
     this.setState({ value: event.target.value });
   };
 
+  handleKeyDown = (event) => {
+    if (event.key === "Enter" && event.target.value !== "") {
+      this.props.onkeydown(this.state.value);
+      this.setState({ value: "" });
+    }
+  };
+
   render() {
     return (
       <input
         type="text"
         value={this.state.value}
         onChange={this.handleChange}
+        onKeyDown={this.handleKeyDown}
       />
     );
   }
@@ -53,10 +61,11 @@ class Todos extends Component {
         { todo: "shampoo", done: true, taskId: 1 },
         { todo: "conditioner", done: false, taskId: 2 },
       ],
+      nextId: 3,
     };
   }
 
-  handleChange = (taskId, done) => {
+  onToggle = (taskId, done) => {
     this.setState((old) => ({
       todos: old.todos.map((todo) =>
         todo.taskId === taskId ? { ...todo, done } : todo
@@ -64,15 +73,22 @@ class Todos extends Component {
     }));
   };
 
+  addItem = (todo) => {
+    this.setState((old) => {
+      const newTodo = { todo, done: false, taskId: old.nextId };
+      return {
+        todos: [...old.todos, newTodo],
+        nextId: old.nextId + 1,
+      };
+    });
+  };
+
   render() {
     return (
       <div>
+        <Input onkeydown={this.addItem} />
         {this.state.todos.map((todo) => (
-          <Item
-            key={todo.taskId}
-            todo={{ ...todo }}
-            onchange={this.handleChange}
-          />
+          <Item key={todo.taskId} todo={{ ...todo }} onchange={this.onToggle} />
         ))}
       </div>
     );
@@ -85,7 +101,7 @@ class App extends Component {
   }
 
   render() {
-    return <Input />;
+    return <Todos />;
   }
 }
 
