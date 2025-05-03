@@ -3,12 +3,13 @@ import { Component } from "react";
 class Item extends Component {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange = (event) => {
-    const { onchange, todo } = this.props;
-    onchange(todo.taskId, !todo.done);
-  };
+  handleChange(event) {
+    const { onChange, todo } = this.props;
+    onChange(todo.taskId, !todo.done);
+  }
 
   render() {
     return (
@@ -28,18 +29,20 @@ class Input extends Component {
   constructor(props) {
     super(props);
     this.state = { value: "" };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
-  handleChange = (event) => {
+  handleChange(event) {
     this.setState({ value: event.target.value });
-  };
+  }
 
-  handleKeyDown = (event) => {
+  handleKeyDown(event) {
     if (event.key === "Enter" && event.target.value !== "") {
       this.props.onkeydown(this.state.value);
       this.setState({ value: "" });
     }
-  };
+  }
 
   render() {
     return (
@@ -56,39 +59,36 @@ class Input extends Component {
 class Todos extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      todos: [
-        { todo: "shampoo", done: true, taskId: 1 },
-        { todo: "conditioner", done: false, taskId: 2 },
-      ],
-      nextId: 3,
-    };
+    this.onToggle = this.onToggle.bind(this);
+    this.addItem = this.addItem.bind(this);
   }
 
-  onToggle = (taskId, done) => {
-    this.setState((old) => ({
-      todos: old.todos.map((todo) =>
-        todo.taskId === taskId ? { ...todo, done } : todo
-      ),
-    }));
-  };
+  onToggle(taskId, done) {
+    const { todos } = this.props;
+    const newTodos = todos.todos.map((todo) =>
+      todo.taskId === taskId ? { ...todo, done } : todo
+    );
 
-  addItem = (todo) => {
-    this.setState((old) => {
-      const newTodo = { todo, done: false, taskId: old.nextId };
-      return {
-        todos: [...old.todos, newTodo],
-        nextId: old.nextId + 1,
-      };
-    });
-  };
+    this.props.onChange(todos.listName, newTodos, todos.nextId);
+  }
+
+  addItem(todo) {
+    const { todos } = this.props;
+
+    const newTodo = { todo, done: false, taskId: todos.nextId };
+    const newTodos = [...this.props.todos.todos, newTodo];
+    const nextId = this.props.todos.nextId + 1;
+
+    this.props.onChange(todos.listName, newTodos, nextId + 1);
+  }
 
   render() {
     return (
       <div>
+        <h1>{this.props.todos.listName}</h1>
         <Input onkeydown={this.addItem} />
-        {this.state.todos.map((todo) => (
-          <Item key={todo.taskId} todo={{ ...todo }} onchange={this.onToggle} />
+        {this.props.todos.todos.map((todo) => (
+          <Item key={todo.taskId} todo={{ ...todo }} onChange={this.onToggle} />
         ))}
       </div>
     );
@@ -98,10 +98,44 @@ class Todos extends Component {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      listOfTodos: [
+        {
+          listName: "shopping",
+          todos: [
+            { todo: "shampoo", done: true, taskId: 1 },
+            { todo: "conditioner", done: false, taskId: 2 },
+          ],
+          nextId: 3,
+        },
+        {
+          listName: "homework",
+          todos: [
+            { todo: "complete todo", done: true, taskId: 1 },
+            { todo: "read about react", done: false, taskId: 2 },
+          ],
+          nextId: 3,
+        },
+      ],
+    };
+
+    this.handleUpdate = this.handleUpdate.bind(this);
+  }
+
+  handleUpdate(listName, todos, nextId) {
+    this.setState((old) => ({
+      listOfTodos: old.listOfTodos.map((todoList) =>
+        todoList.listName === listName
+          ? { ...todoList, todos, nextId }
+          : todoList
+      ),
+    }));
   }
 
   render() {
-    return <Todos />;
+    return this.state.listOfTodos.map((list) => (
+      <Todos key={list.listName} todos={list} onChange={this.handleUpdate} />
+    ));
   }
 }
 
