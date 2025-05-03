@@ -18,7 +18,7 @@ A simple checklist for building a React Todo List app with multiple lists and ba
 
 - [x] Display a single todo item
 - [x] Accept props: `text`, `done` status
-- [ ] mark as done / not done
+- [x] mark as done / not done
 
 ### 🧩 `TodoList`
 
