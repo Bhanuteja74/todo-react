@@ -22,7 +22,7 @@ A simple checklist for building a React Todo List app with multiple lists and ba
 
 ### 🧩 `TodoList`
 
-- [ ] Display one todo list (e.g., Shopping)
+- [x] Display one todo list (e.g., Shopping)
 - [ ] Accept props: `listName`, `todos`
 - [ ] Render all `TodoItem`s for this list
 - [ ] Input to add new item to this list
