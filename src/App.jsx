@@ -76,10 +76,10 @@ class Todos extends Component {
     const { todos } = this.props;
 
     const newTodo = { todo, done: false, taskId: todos.nextId };
-    const newTodos = [...this.props.todos.todos, newTodo];
-    const nextId = this.props.todos.nextId + 1;
+    const newTodos = [...todos.todos, newTodo];
+    const nextId = todos.nextId + 1;
 
-    this.props.onChange(todos.listName, newTodos, nextId + 1);
+    this.props.onChange(todos.listName, newTodos, nextId);
   }
 
   render() {
@@ -99,24 +99,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listOfTodos: [
-        {
-          listName: "shopping",
-          todos: [
-            { todo: "shampoo", done: true, taskId: 1 },
-            { todo: "conditioner", done: false, taskId: 2 },
-          ],
-          nextId: 3,
-        },
-        {
-          listName: "homework",
-          todos: [
-            { todo: "complete todo", done: true, taskId: 1 },
-            { todo: "read about react", done: false, taskId: 2 },
-          ],
-          nextId: 3,
-        },
-      ],
+      listOfTodos: [],
     };
 
     this.handleUpdate = this.handleUpdate.bind(this);

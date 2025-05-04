@@ -8,7 +8,7 @@ A simple checklist for building a React Todo List app with multiple lists and ba
 
 - [x] Create base React project
 - [x] Set up directory structure
-- [ ] Create main `App` component
+- [x] Create main `App` component
 
 ---
 
