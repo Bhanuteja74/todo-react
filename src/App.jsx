@@ -37,44 +37,33 @@ const Input = ({ onkeydown }) => {
   );
 };
 
-class Todos extends Component {
-  constructor(props) {
-    super(props);
-    this.onToggle = this.onToggle.bind(this);
-    this.addItem = this.addItem.bind(this);
-  }
-
-  onToggle(taskId, done) {
-    const { todos } = this.props;
-    const newTodos = todos.todos.map((todo) =>
-      todo.taskId === taskId ? { ...todo, done } : todo
-    );
-
-    this.props.onChange(todos.listName, newTodos, todos.nextId);
-  }
-
-  addItem(todo) {
-    const { todos } = this.props;
-
+const Todos = ({ todos, onChange }) => {
+  const addItem = (todo) => {
     const newTodo = { todo, done: false, taskId: todos.nextId };
     const newTodos = [...todos.todos, newTodo];
     const nextId = todos.nextId + 1;
 
-    this.props.onChange(todos.listName, newTodos, nextId);
-  }
+    onChange(todos.listName, newTodos, nextId);
+  };
 
-  render() {
-    return (
-      <div>
-        <h1>{this.props.todos.listName}</h1>
-        <Input onkeydown={this.addItem} />
-        {this.props.todos.todos.map((todo) => (
-          <Item key={todo.taskId} todo={{ ...todo }} onChange={this.onToggle} />
-        ))}
-      </div>
+  const onToggle = (taskId, done) => {
+    const updatedTodos = todos.todos.map((todo) =>
+      todo.taskId === taskId ? { ...todo, done } : todo
     );
-  }
-}
+
+    onChange(todos.listName, updatedTodos, todos.nextId);
+  };
+
+  return (
+    <div>
+      <h1>{todos.listName}</h1>
+      <Input onkeydown={addItem} />
+      {todos.todos.map((todo) => (
+        <Item key={todo.taskId} todo={{ ...todo }} onChange={onToggle} />
+      ))}
+    </div>
+  );
+};
 
 class App extends Component {
   constructor(props) {
