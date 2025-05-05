@@ -1,23 +1,15 @@
 function* generateId(start = 0, end = Infinity, step = 1) {
-  let iterationCount = 0;
-  for (let i = start; i < end; i += step) {
-    iterationCount++;
-    yield i;
+  for (let value = start; value < end; value += step) {
+    yield value;
   }
-  return iterationCount;
 }
+
 const idGenerator = generateId();
+
 export const handleTodoActions = (state, action) => {
   switch (action.type) {
-    case "add-todos": {
-      const newList = {
-        id: idGenerator.next().value,
-        listName: action.value,
-        todos: [],
-        nextId: 1,
-      };
-      return [...state, newList];
-    }
+    case "add-todos":
+      return addTodo(action, state);
 
     case "add-todo-item": {
       return state.map((todoList) =>
@@ -49,7 +41,22 @@ export const handleTodoActions = (state, action) => {
       );
     }
 
+    case "delete-list": {
+      return state.filter((todos) => todos.id !== action.id);
+    }
+
     default:
       return state;
   }
 };
+function addTodo(action, state) {
+  {
+    const newList = {
+      id: idGenerator.next().value,
+      listName: action.value,
+      todos: [],
+      nextId: 1,
+    };
+    return [...state, newList];
+  }
+}
