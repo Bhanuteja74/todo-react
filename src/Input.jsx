@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const Input = ({ onkeydown }) => {
+export const Input = ({ onEnter, type }) => {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
@@ -9,7 +9,7 @@ export const Input = ({ onkeydown }) => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      onkeydown(value);
+      onEnter({ type, value });
       setValue("");
     }
   };
