@@ -1,29 +1,17 @@
 import { Component, useState } from "react";
 
-class Item extends Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    const { onChange, todo } = this.props;
+const Item = ({ todo, onChange }) => {
+  const handleChange = () => {
     onChange(todo.taskId, !todo.done);
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <input
-          type="checkbox"
-          checked={this.props.todo.done}
-          onChange={this.handleChange}
-        />
-        <span>{this.props.todo.todo}</span>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <input type="checkbox" checked={todo.done} onChange={handleChange} />
+      <span>{todo.todo}</span>
+    </div>
+  );
+};
 
 const Input = ({ onkeydown }) => {
   const [value, setValue] = useState("");
