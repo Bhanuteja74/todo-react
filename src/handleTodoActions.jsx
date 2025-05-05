@@ -6,6 +6,18 @@ function* generateId(start = 0, end = Infinity, step = 1) {
 
 const idGenerator = generateId();
 
+function addTodo(action, state) {
+  {
+    const newList = {
+      id: idGenerator.next().value,
+      listName: action.value,
+      todos: [],
+      nextId: 1,
+    };
+    return [...state, newList];
+  }
+}
+
 export const handleTodoActions = (state, action) => {
   switch (action.type) {
     case "add-todos":
@@ -45,18 +57,20 @@ export const handleTodoActions = (state, action) => {
       return state.filter((todos) => todos.id !== action.id);
     }
 
+    case "delete-todo-item": {
+      return state.map((todoList) =>
+        todoList.id === action.id
+          ? {
+              ...todoList,
+              todos: todoList.todos.filter(
+                (todo) => todo.taskId !== action.taskId
+              ),
+            }
+          : todoList
+      );
+    }
+
     default:
       return state;
   }
 };
-function addTodo(action, state) {
-  {
-    const newList = {
-      id: idGenerator.next().value,
-      listName: action.value,
-      todos: [],
-      nextId: 1,
-    };
-    return [...state, newList];
-  }
-}
