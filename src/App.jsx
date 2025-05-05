@@ -65,50 +65,33 @@ const Todos = ({ todos, onChange }) => {
   );
 };
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      listOfTodos: [],
-    };
+const App = () => {
+  const [lists, setLists] = useState([]);
 
-    this.handleUpdate = this.handleUpdate.bind(this);
-    this.addList = this.addList.bind(this);
-  }
-
-  addList(listName) {
+  const addList = (listName) => {
     const newList = { listName, todos: [], nextId: 1 };
+    setLists((old) => [...old, newList]);
+  };
 
-    this.setState((old) => ({
-      listOfTodos: [...old.listOfTodos, newList],
-    }));
-  }
-
-  handleUpdate(listName, todos, nextId) {
-    this.setState((old) => ({
-      listOfTodos: old.listOfTodos.map((todoList) =>
+  const handleUpdate = (listName, todos, nextId) => {
+    setLists((old) =>
+      old.map((todoList) =>
         todoList.listName === listName
           ? { ...todoList, todos, nextId }
           : todoList
-      ),
-    }));
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Lists</h1>
-        <Input onkeydown={this.addList} />
-        {this.state.listOfTodos.map((list) => (
-          <Todos
-            key={list.listName}
-            todos={list}
-            onChange={this.handleUpdate}
-          />
-        ))}
-      </div>
+      )
     );
-  }
-}
+  };
+
+  return (
+    <div>
+      <h1>Todos</h1>
+      <Input onkeydown={addList} />
+      {lists.map((list) => (
+        <Todos key={list.listName} todos={list} onChange={handleUpdate} />
+      ))}
+    </div>
+  );
+};
 
 export default App;
