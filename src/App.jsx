@@ -1,58 +1,10 @@
-import { Component, useState } from "react";
+import { useState } from "react";
+import { Input } from "./Input";
+import { Item } from "./Item";
 
-const Item = ({ todo, onChange }) => {
-  const handleChange = () => {
-    onChange(todo.taskId, !todo.done);
-  };
-
-  return (
-    <div>
-      <input type="checkbox" checked={todo.done} onChange={handleChange} />
-      <span>{todo.todo}</span>
-    </div>
-  );
-};
-
-const Input = ({ onkeydown }) => {
-  const [value, setValue] = useState("");
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && event.target.value !== "") {
-      onkeydown(value);
-      setValue("");
-    }
-  };
-
-  return (
-    <input
-      type="text"
-      value={value}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-    />
-  );
-};
-
-const Todos = ({ todos, onChange }) => {
-  const addItem = (todo) => {
-    const newTodo = { todo, done: false, taskId: todos.nextId };
-    const newTodos = [...todos.todos, newTodo];
-    const nextId = todos.nextId + 1;
-
-    onChange(todos.listName, newTodos, nextId);
-  };
-
-  const onToggle = (taskId, done) => {
-    const updatedTodos = todos.todos.map((todo) =>
-      todo.taskId === taskId ? { ...todo, done } : todo
-    );
-
-    onChange(todos.listName, updatedTodos, todos.nextId);
-  };
+const Todos = ({ todos, onItemAdd, onItemToggle }) => {
+  const addItem = (todo) => onItemAdd(todos.id, todo);
+  const onToggle = (taskId, done) => onItemToggle(todos.id, taskId, done);
 
   return (
     <div>
@@ -65,19 +17,57 @@ const Todos = ({ todos, onChange }) => {
   );
 };
 
+function* generateId(start = 0, end = Infinity, step = 1) {
+  let iterationCount = 0;
+  for (let i = start; i < end; i += step) {
+    iterationCount++;
+    yield i;
+  }
+  return iterationCount;
+}
+
+const idGenerator = generateId();
+
 const App = () => {
   const [lists, setLists] = useState([]);
 
   const addList = (listName) => {
-    const newList = { listName, todos: [], nextId: 1 };
+    const newList = {
+      id: idGenerator.next().value,
+      listName,
+      todos: [],
+      nextId: 1,
+    };
     setLists((old) => [...old, newList]);
   };
 
-  const handleUpdate = (listName, todos, nextId) => {
+  const handleItemAdd = (id, todo) => {
     setLists((old) =>
       old.map((todoList) =>
-        todoList.listName === listName
-          ? { ...todoList, todos, nextId }
+        todoList.id === id
+          ? {
+              ...todoList,
+              todos: [
+                ...todoList.todos,
+                { taskId: todoList.nextId, done: false, todo: todo },
+              ],
+              nextId: todoList.nextId + 1,
+            }
+          : todoList
+      )
+    );
+  };
+
+  const handleToggle = (id, taskId, done) => {
+    setLists((old) =>
+      old.map((todoList) =>
+        todoList.id === id
+          ? {
+              ...todoList,
+              todos: todoList.todos.map((todo) =>
+                todo.taskId === taskId ? { ...todo, done } : todo
+              ),
+            }
           : todoList
       )
     );
@@ -88,7 +78,12 @@ const App = () => {
       <h1>Todos</h1>
       <Input onkeydown={addList} />
       {lists.map((list) => (
-        <Todos key={list.listName} todos={list} onChange={handleUpdate} />
+        <Todos
+          key={list.id}
+          todos={list}
+          onItemAdd={handleItemAdd}
+          onItemToggle={handleToggle}
+        />
       ))}
     </div>
   );
