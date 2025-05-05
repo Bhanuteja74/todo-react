@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component, useState } from "react";
 
 class Item extends Component {
   constructor(props) {
@@ -25,36 +25,29 @@ class Item extends Component {
   }
 }
 
-class Input extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: "" };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-  }
+const Input = ({ onkeydown }) => {
+  const [value, setValue] = useState("");
 
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
 
-  handleKeyDown(event) {
+  const handleKeyDown = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      this.props.onkeydown(this.state.value);
-      this.setState({ value: "" });
+      onkeydown(value);
+      setValue("");
     }
-  }
+  };
 
-  render() {
-    return (
-      <input
-        type="text"
-        value={this.state.value}
-        onChange={this.handleChange}
-        onKeyDown={this.handleKeyDown}
-      />
-    );
-  }
-}
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
+    />
+  );
+};
 
 class Todos extends Component {
   constructor(props) {
